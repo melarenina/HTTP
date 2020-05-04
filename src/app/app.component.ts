@@ -34,6 +34,12 @@ export class AppComponent implements OnInit {
 
   onClearPosts() {
     // Send Http request
+
+    // Since the function inside the subscribe will only work if the method succeded,
+    // We can cler the loaded posts in there
+    this.posts.deletePosts().subscribe(() => {
+      this.loadedPosts = [];
+    });
   }
 
   private fetchingPosts(){
