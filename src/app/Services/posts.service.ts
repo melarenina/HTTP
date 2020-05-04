@@ -23,21 +23,16 @@ export class PostsService{
 
     fetchPosts(){
         // <> - Defininf the type, what will be the value of the response data using our interface POST
-    // Which will have a key encrypted as a string, which will be a post
-    this.http.get<{ [key: string]: Post }>('https://http-angularcourse.firebaseio.com/posts.json')
-    .pipe(map((responseData) => {
-      const postsArray: Post[] = [];
-      for ( const key in responseData ){
-        if (responseData.hasOwnProperty(key)){
-          postsArray.push({ ...responseData[key], id: key});
-        }
-      }
-      return postsArray;
-    }))
-    .subscribe(
-      posts => {
-
-      }
-    );
+        // Which will have a key encrypted as a string, which will be a post
+        return this.http.get<{ [key: string]: Post }>('https://http-angularcourse.firebaseio.com/posts.json')
+        .pipe(map((responseData) => {
+          const postsArray: Post[] = [];
+          for ( const key in responseData ){
+            if (responseData.hasOwnProperty(key)){
+              postsArray.push({ ...responseData[key], id: key});
+            }
+          }
+          return postsArray;
+        }));
     }
 }
