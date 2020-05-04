@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Post } from '../Models/postInterface.model';
 import { map, catchError } from 'rxjs/operators';
 import { Subject, throwError } from 'rxjs';
@@ -27,6 +27,12 @@ export class PostsService{
     }
 
     fetchPosts(){
+
+        let searchParams = new HttpParams();
+        // Print pretty prints the response in a prettier way
+        searchParams = searchParams.append('print', 'pretty');
+        searchParams = searchParams.append('custom', 'key');
+
         // <> - Defininf the type, what will be the value of the response data using our interface POST
         // Which will have a key encrypted as a string, which will be a post
 
@@ -34,7 +40,11 @@ export class PostsService{
         return this.http
         .get<{ [key: string]: Post }>(
             'https://http-angularcourse.firebaseio.com/posts.json',
-            { headers: new HttpHeaders({'Custom-Header': 'Hello'}) }
+            {
+                headers: new HttpHeaders({'Custom-Header': 'Hello'}),
+                // This will concatenate this value to the url of the sending post
+                params: searchParams
+            }
         )
         .pipe(
             map((responseData) => {
