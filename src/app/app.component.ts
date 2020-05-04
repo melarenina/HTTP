@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { Post } from './Models/post.model';
 
 @Component({
   selector: 'app-root',
@@ -16,9 +17,9 @@ export class AppComponent implements OnInit {
     this.fetchPosts();
   }
 
-  onCreatePost(postData: { title: string; content: string }) {
+  onCreatePost(postData: Post) {
     // Send Http request
-    this.http.post(
+    this.http.post<{name: string}>(
         'https://http-angularcourse.firebaseio.com/posts.json',
         postData
       )
@@ -37,9 +38,11 @@ export class AppComponent implements OnInit {
   }
 
   private fetchPosts(){
-    this.http.get('https://http-angularcourse.firebaseio.com/posts.json')
-    .pipe(map(responseData => {
-      const postsArray = [];
+    // <> - Defininf the type, what will be the value of the response data using our interface POST
+    // Which will have a key encrypted as a string, which will be a post
+    this.http.get<{ [key: string]: Post }>('https://http-angularcourse.firebaseio.com/posts.json')
+    .pipe(map((responseData) => {
+      const postsArray: Post[] = [];
       for ( const key in responseData ){
         if (responseData.hasOwnProperty(key)){
           postsArray.push({ ...responseData[key], id: key});
