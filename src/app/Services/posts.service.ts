@@ -73,7 +73,8 @@ export class PostsService{
         .delete(
             'https://http-angularcourse.firebaseio.com/posts.json',
             {
-                observe: 'events'
+                observe: 'events',
+                responseType: 'json'
             }
         ).pipe(
             tap(event => {
