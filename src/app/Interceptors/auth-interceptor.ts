@@ -1,5 +1,6 @@
-import { HttpInterceptor, HttpRequest, HttpHandler } from '@angular/common/http';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEventType } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { tap } from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 
@@ -14,7 +15,16 @@ export class AuthInterceptor implements HttpInterceptor{
         const modifiedRequest = request.clone({headers: request.headers.append('Auth', 'xyz')});
 
         // This is what lets the request continue
-        return next.handle(modifiedRequest);
+        return next.handle(modifiedRequest).pipe(
+            tap(event => {
+                console.log(event);
+                if (event.type === HttpEventType.Response){
+                    console.log('Response arrived. Body Data: ');
+                    console.log(event.body);
+                }
+            })
+        );
+        // return next.handle(request);
 
         // You can also grab the url
         // request.url
