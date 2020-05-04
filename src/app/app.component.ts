@@ -16,6 +16,9 @@ export class AppComponent implements OnInit {
   // To show a loading indicator on the template
   isFetching = false;
 
+  // To check if there is any error and display it to the user
+  error = null;
+
   constructor(private http: HttpClient,
               private posts: PostsService) {}
 
@@ -48,6 +51,9 @@ export class AppComponent implements OnInit {
     this.posts.fetchPosts().subscribe(posts =>  {
       this.isFetching = false;
       this.loadedPosts = posts;
+    }, error => {
+      this.error = error.message;
+      console.log(error.message);
     });
   }
 
