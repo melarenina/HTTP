@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import { Post } from './Models/post.model';
+import { Post } from './Models/postInterface.model';
+import { PostsService } from './Services/posts.service';
 
 @Component({
   selector: 'app-root',
@@ -15,54 +16,25 @@ export class AppComponent implements OnInit {
   // To show a loading indicator on the template
   isFetching = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,
+              private posts: PostsService) {}
 
   ngOnInit() {
-    this.fetchPosts();
+    this.posts.fetchPosts();
   }
 
   onCreatePost(postData: Post) {
-    // Send Http request
-    this.http.post<{name: string}>(
-        'https://http-angularcourse.firebaseio.com/posts.json',
-        postData
-      )
-      .subscribe(responseData => {
-        console.log(responseData);
-      });
+    this.posts.createAndStorePost(postData.title, postData.content);
   }
 
   onFetchPosts() {
     // Send Http request
-    this.fetchPosts();
+    this.posts.fetchPosts();
   }
 
   onClearPosts() {
     // Send Http request
   }
 
-  private fetchPosts(){
-
-    this.isFetching = true;
-
-    // <> - Defininf the type, what will be the value of the response data using our interface POST
-    // Which will have a key encrypted as a string, which will be a post
-    this.http.get<{ [key: string]: Post }>('https://http-angularcourse.firebaseio.com/posts.json')
-    .pipe(map((responseData) => {
-      const postsArray: Post[] = [];
-      for ( const key in responseData ){
-        if (responseData.hasOwnProperty(key)){
-          postsArray.push({ ...responseData[key], id: key});
-        }
-      }
-      return postsArray;
-    }))
-    .subscribe(
-      posts => {
-        this.loadedPosts = posts;
-        this.isFetching = false;
-      }
-    );
-  }
 
 }
