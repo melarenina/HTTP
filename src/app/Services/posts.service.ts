@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Post } from '../Models/postInterface.model';
 import { map, catchError } from 'rxjs/operators';
 import { Subject, throwError } from 'rxjs';
@@ -31,7 +31,11 @@ export class PostsService{
         // Which will have a key encrypted as a string, which will be a post
 
         // Returning the observable
-        return this.http.get<{ [key: string]: Post }>('https://http-angularcourse.firebaseio.com/posts.json')
+        return this.http
+        .get<{ [key: string]: Post }>(
+            'https://http-angularcourse.firebaseio.com/posts.json',
+            { headers: new HttpHeaders({'Custom-Header': 'Hello'}) }
+        )
         .pipe(
             map((responseData) => {
                 const postsArray: Post[] = [];
