@@ -6,6 +6,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthInterceptor } from './Interceptors/auth-interceptor';
+import { LogginInterceptor } from './Interceptors/loggin-interceptor';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,13 @@ import { AuthInterceptor } from './Interceptors/auth-interceptor';
       provide: HTTP_INTERCEPTORS,
       // Interceptor
       useClass: AuthInterceptor,
+      // You can have multiple interceptors
+      multi: true
+    },
+    { // Token
+      provide: HTTP_INTERCEPTORS,
+      // Interceptor
+      useClass: LogginInterceptor,
       // You can have multiple interceptors
       multi: true
     }
