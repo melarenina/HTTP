@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Post } from '../Models/postInterface.model';
-import { map } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { Subject, throwError } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 
@@ -32,15 +32,22 @@ export class PostsService{
 
         // Returning the observable
         return this.http.get<{ [key: string]: Post }>('https://http-angularcourse.firebaseio.com/posts.json')
-        .pipe(map((responseData) => {
-          const postsArray: Post[] = [];
-          for ( const key in responseData ){
-            if (responseData.hasOwnProperty(key)){
-              postsArray.push({ ...responseData[key], id: key});
-            }
-          }
-          return postsArray;
-        }));
+        .pipe(
+            map((responseData) => {
+                const postsArray: Post[] = [];
+                for ( const key in responseData ){
+                  if (responseData.hasOwnProperty(key)){
+                    postsArray.push({ ...responseData[key], id: key});
+                  }
+                }
+                return postsArray;
+            }),
+            // If you need to do some operation when the error occurs
+            catchError(errorRes => {
+                // Send to analytics server
+                return throwError(errorRes);
+            })
+        );
     }
 
     deletePosts(){

@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 import { Post } from './Models/postInterface.model';
 import { PostsService } from './Services/posts.service';
 import { Subscription } from 'rxjs';
