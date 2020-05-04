@@ -9,7 +9,11 @@ import { Post } from './Models/post.model';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+
   loadedPosts: Post[] = [];
+
+  // To show a loading indicator on the template
+  isFetching = false;
 
   constructor(private http: HttpClient) {}
 
@@ -38,6 +42,9 @@ export class AppComponent implements OnInit {
   }
 
   private fetchPosts(){
+
+    this.isFetching = true;
+
     // <> - Defininf the type, what will be the value of the response data using our interface POST
     // Which will have a key encrypted as a string, which will be a post
     this.http.get<{ [key: string]: Post }>('https://http-angularcourse.firebaseio.com/posts.json')
@@ -53,6 +60,7 @@ export class AppComponent implements OnInit {
     .subscribe(
       posts => {
         this.loadedPosts = posts;
+        this.isFetching = false;
       }
     );
   }
