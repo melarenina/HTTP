@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Post } from './Models/postInterface.model';
 import { PostsService } from './Services/posts.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
 
   loadedPosts: Post[] = [];
+  private errorSub: Subscription;
 
   // To show a loading indicator on the template
   isFetching = false;
@@ -23,6 +25,11 @@ export class AppComponent implements OnInit {
               private posts: PostsService) {}
 
   ngOnInit() {
+
+    this.errorSub = this.posts.error.subscribe(errorMessage => {
+      this.error = errorMessage;
+    });
+
     this.fetchingPosts();
   }
 
@@ -57,5 +64,8 @@ export class AppComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(){
+    this.errorSub.unsubscribe();
+  }
 
 }
