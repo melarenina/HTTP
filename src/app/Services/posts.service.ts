@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams, HttpEventType } from '@angular/common/http';
 import { Post } from '../Models/postInterface.model';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 import { Subject, throwError } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
@@ -17,7 +17,11 @@ export class PostsService{
         // Send Http request
         this.http.post<{name: string}>(
         'https://http-angularcourse.firebaseio.com/posts.json',
-        postData
+        postData,
+        {
+            // to get all the properties of the response, and not only the body
+            observe: 'response'
+        }
       )
       .subscribe(responseData => {
         console.log(responseData);
@@ -65,6 +69,26 @@ export class PostsService{
     }
 
     deletePosts(){
-        return this.http.delete('https://http-angularcourse.firebaseio.com/posts.json');
+        return this.http
+        .delete(
+            'https://http-angularcourse.firebaseio.com/posts.json',
+            {
+                observe: 'events'
+            }
+        ).pipe(
+            tap(event => {
+                console.log(event);
+
+                // Checking if we sent the post
+                if (event.type === HttpEventType.Sent){
+                    console.log(event.type);
+                }
+
+                // Checking if we had any response
+                if (event.type === HttpEventType.Response){
+                    console.log(event.body);
+                }
+            })
+        );
     }
 }
